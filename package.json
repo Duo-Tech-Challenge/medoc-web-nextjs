@@ -2,14 +2,17 @@
   "name": "medoc-web-nextjs",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "framer-motion": "^12.23.26",
+    "lucide-react": "^0.560.0",
     "next": "16.0.8",
     "react": "19.2.1",
     "react-dom": "19.2.1"
