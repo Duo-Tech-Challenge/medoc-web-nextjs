@@ -1,0 +1,46 @@
+name: trigger-dev-merge
+
+on:
+  push:
+    branches:
+      - feat/home
+
+jobs:
+  merge-to-dev:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # important pour avoir tout l'historique
+
+      - name: Check commit message for "OK"
+        id: check_commit
+        run: |
+          LAST_COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          echo "Last commit: $LAST_COMMIT_MESSAGE"
+
+          if echo "$LAST_COMMIT_MESSAGE" | grep -q "OK"; then
+            echo "should_merge=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_merge=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Stop if commit does not contain OK
+        if: steps.check_commit.outputs.should_merge == 'false'
+        run: |
+          echo "Commit does NOT contain OK. Stopping workflow."
+          exit 0
+
+      - name: Configure Git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge feat/home into dev
+        run: |
+          git fetch origin
+          git checkout dev
+          git merge origin/feat/home --no-ff -m "Auto-merge: feat/home → dev"
+          git push origin dev
