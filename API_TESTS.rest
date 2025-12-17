@@ -1,0 +1,211 @@
+### MEDOC API v1 - Tests locaux
+
+**Base URL**: `http://localhost:3000/api/v1`
+
+---
+
+## 🔍 SEARCH (Public)
+
+### Recherche inversée: Médicament → Pharmacies
+
+```http
+GET /search?medication=Aspirin
+```
+
+**Response (200)**:
+```json
+{
+  "status": "success",
+  "code": 200,
+  "message": "Search results",
+  "data": {
+    "medication": {
+      "id": "uuid",
+      "name": "Aspirin",
+      "genericName": "Acetylsalicylic Acid",
+      "form": "Comprimé",
+      "dosage": "500mg",
+      "manufacturer": "Bayer"
+    },
+    "pharmacies": [
+      {
+        "id": "uuid",
+        "name": "Pharmacie Centrale",
+        "address": "123 Rue de la Paix",
+        "city": "Paris",
+        "latitude": 48.8566,
+        "longitude": 2.3522,
+        "isAvailable": true,
+        "averageRating": 4.5
+      }
+    ]
+  },
+  "timestamp": "2025-12-17T10:30:00Z"
+}
+```
+
+### Infos publiques d'une pharmacie
+
+```http
+GET /search/pharmacy/{pharmacyId}
+```
+
+**Response (200)**: Données publiques (pas de prix/stock)
+
+---
+
+## 💊 MEDICATIONS (Admin)
+
+### Créer un médicament
+
+```http
+POST /medications
+Content-Type: application/json
+
+{
+  "name": "Aspirin",
+  "genericName": "Acetylsalicylic Acid",
+  "form": "Comprimé",
+  "dosage": "500mg",
+  "manufacturer": "Bayer"
+}
+```
+
+### Lister tous les médicaments
+
+```http
+GET /medications
+```
+
+### Récupérer un médicament
+
+```http
+GET /medications/{id}
+```
+
+### Mettre à jour un médicament
+
+```http
+PUT /medications/{id}
+Content-Type: application/json
+
+{
+  "name": "Aspirin Plus",
+  "dosage": "750mg"
+}
+```
+
+### Supprimer un médicament
+
+```http
+DELETE /medications/{id}
+```
+
+---
+
+## 🏥 PHARMACIES (Admin)
+
+### Créer une pharmacie (Admin Controlled Account Creation)
+
+```http
+POST /pharmacies
+Content-Type: application/json
+
+{
+  "name": "Pharmacie Centrale",
+  "email": "contact@pharmacie-centrale.fr",
+  "password": "SecurePass123!",
+  "address": {
+    "street": "123 Rue de la Paix",
+    "city": "Paris",
+    "zipCode": "75000",
+    "country": "France"
+  },
+  "location": {
+    "latitude": 48.8566,
+    "longitude": 2.3522
+  },
+  "phone": "0123456789"
+}
+```
+
+### Lister les pharmacies (publiques: validées uniquement)
+
+```http
+GET /pharmacies
+```
+
+### Récupérer une pharmacie (publique)
+
+```http
+GET /pharmacies/{id}
+```
+
+### Mettre à jour une pharmacie
+
+```http
+PUT /pharmacies/{id}
+Content-Type: application/json
+
+{
+  "name": "Pharmacie Centrale Plus",
+  "phone": "0987654321"
+}
+```
+
+### Valider une pharmacie (Admin only)
+
+```http
+POST /pharmacies/{id}/validate
+Content-Type: application/json
+
+{
+  "isValidated": true
+}
+```
+
+### Supprimer une pharmacie
+
+```http
+DELETE /pharmacies/{id}
+```
+
+---
+
+## 📝 Format de réponse (OBLIGATOIRE)
+
+### Succès
+
+```json
+{
+  "status": "success",
+  "code": 200,
+  "message": "Description du succès",
+  "data": {},
+  "timestamp": "2025-12-17T10:30:00Z"
+}
+```
+
+### Erreur
+
+```json
+{
+  "status": "error",
+  "code": 400,
+  "message": "Description de l'erreur",
+  "errors": {
+    "field": ["Error message 1", "Error message 2"]
+  },
+  "timestamp": "2025-12-17T10:30:00Z"
+}
+```
+
+---
+
+## 🚀 Prochaines étapes
+
+- [ ] Phase 3 : Modèles Prisma (schema.prisma)
+- [ ] Phase 4 : Recherche complète avec disponibilité
+- [ ] Phase 5 : Frontend (pages recherche)
+- [ ] Phase 6 : Authentification JWT
+- [ ] Phase 7 : Tests unitaires
