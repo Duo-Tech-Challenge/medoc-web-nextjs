@@ -74,7 +74,7 @@ const Hero = () => {
 
                             <motion.div 
                                 variants={itemVariants}
-                                className="w-3/4 p-2 h-20 border rounded-full grid grid-cols-[70px_1fr_100px] gap-2 bg-white/90" 
+                                className="w-3/4 p-2 h-20 rounded-full grid grid-cols-[70px_1fr_100px] gap-2 bg-white/90" 
                                 style={{ boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)', backdropFilter: 'blur(10px)' }}
                             >
                                 <div className="bg-blue-500 rounded-full flex items-center justify-center">
