@@ -243,7 +243,81 @@ Données retournées :
 
 ---
 
-## PHASE 12 – Finalisation
+
+## PHASE 12 – Workflows avancés ADMIN (POST-MVP)
+
+### 12.1 Workflow de validation avancée des pharmacies
+
+- Revue manuelle des informations
+- Historique des validations
+- Commentaire interne admin (non visible pharmacie)
+
+### 12.2 Gestion des accès admin
+
+- Rôles admin (SUPER_ADMIN / ADMIN)
+- Journal des actions admin
+
+### 12.3 Suspension & réactivation
+
+- Suspension temporaire
+- Réactivation conditionnelle
+- Blocage immédiat de connexion
+
+---
+
+## PHASE 13 – Workflows avancés PHARMACIE (POST-MVP)
+
+### 13.1 Profil pharmacie interne
+
+- Modification infos internes
+- Horaires
+- Contact interne
+
+### 13.2 Gestion avancée disponibilité
+
+- Indisponibilité temporaire
+- Historique des changements
+
+### 13.3 Analytics internes pharmacie
+
+- Tendances de recherche
+- Médicaments souvent recherchés
+- Périodes de forte demande
+
+---
+
+## PHASE 14 – Notifications & communication
+
+### 14.1 Notifications système
+
+- Validation pharmacie
+- Suspension
+- Réactivation
+
+### 14.2 Logs & alertes internes
+
+- Alertes admin
+- Alertes pharmacie
+
+---
+
+## PHASE 15 – Scalabilité & préparation future
+
+- Séparation services
+- Préparation API v2
+- Feature flags
+
+---
+
+## PHASE 16 – Finalisation
+
+- Nettoyage du code
+- Documentation README
+- Vérification conformité cahier des charges
+
+---
+
+## PHASE 13 – Finalisation
 
 - Nettoyage du code
 - Documentation README

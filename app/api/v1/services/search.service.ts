@@ -32,29 +32,20 @@ export class SearchService {
 
     const medication = medications[0];
 
-    // 2. Trouver toutes les pharmacies avec disponibilité pour ce médicament
-    const pharmacyMedications = await pharmacyMedicationRepository.findByMedication(medication.id);
+    // 2. Utiliser la requête optimisée du repository pour récupérer les pharmacies
+    const pharmacyMedications = await pharmacyMedicationRepository.findAvailableByMedication(medication.id);
     
-    // 3. Récupérer les pharmacies validées uniquement
-    const pharmacies = await pharmacyRepository.findValidated();
-    
-    // 4. Combiner les données
-    const pharmacyResults: PharmacySearchResultDTO[] = [];
-
-    for (const pharmacy of pharmacies) {
-      const availability = pharmacyMedications.find(pm => pm.pharmacyId === pharmacy.id);
-      
-      pharmacyResults.push({
-        id: pharmacy.id,
-        name: pharmacy.name,
-        address: pharmacy.address.street,
-        city: pharmacy.address.city,
-        latitude: pharmacy.location.latitude,
-        longitude: pharmacy.location.longitude,
-        isAvailable: availability?.isAvailable ?? false,
-        averageRating: pharmacy.averageRating,
-      });
-    }
+    // 3. Transformer les résultats en format de recherche
+    const pharmacyResults: PharmacySearchResultDTO[] = pharmacyMedications.map(pm => ({
+      id: pm.pharmacyId,
+      name: (pm as any).pharmacy?.name || '',
+      address: (pm as any).pharmacy?.street || '',
+      city: (pm as any).pharmacy?.city || '',
+      latitude: (pm as any).pharmacy?.latitude || 0,
+      longitude: (pm as any).pharmacy?.longitude || 0,
+      isAvailable: pm.isAvailable,
+      averageRating: (pm as any).pharmacy?.averageRating || 0,
+    }));
 
     logger.info('Search completed', { medicationId: medication.id, pharmaciesCount: pharmacyResults.length });
 

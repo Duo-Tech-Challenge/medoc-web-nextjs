@@ -1,8 +1,10 @@
 /**
  * Repository Pattern Base
  * Couche d'abstraction pour accès aux données (via Prisma)
- * Préparation - sans DB réelle pour maintenant
+ * Connecté à PostgreSQL réelle
  */
+
+import { prisma } from '@/lib/prisma';
 
 export abstract class BaseRepository<T> {
   abstract findById(id: string): Promise<T | null>;
@@ -13,7 +15,14 @@ export abstract class BaseRepository<T> {
 }
 
 /**
- * Mock Repository pour le développement sans DB
+ * Repository Prisma de base
+ */
+export abstract class PrismaRepository<T> extends BaseRepository<T> {
+  protected prisma = prisma;
+}
+
+/**
+ * Mock Repository pour les tests
  */
 export class MockRepository<T extends { id: string }> extends BaseRepository<T> {
   protected data: Map<string, T> = new Map();
