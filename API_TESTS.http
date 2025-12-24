@@ -1,0 +1,291 @@
+# MEDOC API Tests (REST Client)
+
+## Base URL
+- Development: `http://localhost:3000/api/v1`
+- Production: `https://medoc.example.com/api/v1`
+
+---
+
+## Authentication
+
+### User Registration
+```http
+POST /auth/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "SecurePass123!",
+  "firstName": "John",
+  "lastName": "Doe"
+}
+```
+
+**Response (201):**
+```json
+{
+  "status": "success",
+  "code": 201,
+  "message": "User registered successfully",
+  "data": {
+    "user": {
+      "id": "uuid",
+      "email": "user@example.com",
+      "firstName": "John",
+      "lastName": "Doe",
+      "role": "user"
+    },
+    "tokens": {
+      "accessToken": "jwt_token_here",
+      "refreshToken": "jwt_refresh_token_here"
+    }
+  },
+  "timestamp": "2025-12-17T10:30:00Z"
+}
+```
+
+### User Login
+```http
+POST /auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "SecurePass123!"
+}
+```
+
+---
+
+## Search (Public)
+
+### Search Medications → Pharmacies
+```http
+GET /search?medication=Aspirin
+```
+
+**Response (200):**
+```json
+{
+  "status": "success",
+  "code": 200,
+  "message": "Search results",
+  "data": {
+    "medication": {
+      "id": "med_uuid",
+      "name": "Aspirin",
+      "genericName": "Acetylsalicylic Acid",
+      "form": "Comprimé",
+      "dosage": "500mg",
+      "manufacturer": "Bayer"
+    },
+    "pharmacies": [
+      {
+        "id": "pharm_uuid",
+        "name": "Pharmacie Centrale",
+        "address": "123 Rue de la Paix",
+        "city": "Paris",
+        "latitude": 48.8566,
+        "longitude": 2.3522,
+        "isAvailable": true,
+        "averageRating": 4.5
+      }
+    ]
+  },
+  "timestamp": "2025-12-17T10:30:00Z"
+}
+```
+
+### Get Pharmacy Public Info
+```http
+GET /search/pharmacy/pharm_uuid
+```
+
+---
+
+## Medications Management (Admin)
+
+### Create Medication
+```http
+POST /medications
+Content-Type: application/json
+Authorization: Bearer your_jwt_token
+
+{
+  "name": "Ibuprofen",
+  "genericName": "Ibuprofen",
+  "form": "Comprimé",
+  "dosage": "200mg",
+  "manufacturer": "Sanofi"
+}
+```
+
+### List All Medications
+```http
+GET /medications
+```
+
+### Get Single Medication
+```http
+GET /medications/med_uuid
+```
+
+### Update Medication
+```http
+PUT /medications/med_uuid
+Content-Type: application/json
+Authorization: Bearer your_jwt_token
+
+{
+  "dosage": "400mg"
+}
+```
+
+### Delete Medication
+```http
+DELETE /medications/med_uuid
+Authorization: Bearer your_jwt_token
+```
+
+---
+
+## Pharmacy Management (Admin Controlled)
+
+### Create Pharmacy (Admin Only)
+```http
+POST /pharmacies
+Content-Type: application/json
+Authorization: Bearer admin_jwt_token
+
+{
+  "name": "Pharmacie Centrale Plus",
+  "email": "contact@pharmacie-centrale.fr",
+  "password": "SecurePass123!",
+  "address": {
+    "street": "456 Rue de la Santé",
+    "city": "Lyon",
+    "zipCode": "69000",
+    "country": "France"
+  },
+  "location": {
+    "latitude": 45.7640,
+    "longitude": 4.8357
+  },
+  "phone": "0472123456"
+}
+```
+
+### List Validated Pharmacies (Public)
+```http
+GET /pharmacies
+```
+
+### Get Pharmacy Details (Public)
+```http
+GET /pharmacies/pharm_uuid
+```
+
+### Validate Pharmacy (Admin Only)
+```http
+POST /pharmacies/pharm_uuid/validate
+Content-Type: application/json
+Authorization: Bearer admin_jwt_token
+
+{
+  "isValidated": true
+}
+```
+
+### Update Pharmacy (Pharmacy or Admin)
+```http
+PUT /pharmacies/pharm_uuid
+Content-Type: application/json
+Authorization: Bearer pharmacy_jwt_token
+
+{
+  "phone": "0472654321"
+}
+```
+
+### Delete Pharmacy (Admin Only)
+```http
+DELETE /pharmacies/pharm_uuid
+Authorization: Bearer admin_jwt_token
+```
+
+---
+
+## Error Responses
+
+### Bad Request (400)
+```json
+{
+  "status": "error",
+  "code": 400,
+  "message": "Invalid input",
+  "errors": {
+    "email": ["Invalid email format"],
+    "password": ["Password must be at least 8 characters"]
+  },
+  "timestamp": "2025-12-17T10:30:00Z"
+}
+```
+
+### Unauthorized (401)
+```json
+{
+  "status": "error",
+  "code": 401,
+  "message": "Authentication required",
+  "timestamp": "2025-12-17T10:30:00Z"
+}
+```
+
+### Forbidden (403)
+```json
+{
+  "status": "error",
+  "code": 403,
+  "message": "Insufficient permissions",
+  "timestamp": "2025-12-17T10:30:00Z"
+}
+```
+
+### Not Found (404)
+```json
+{
+  "status": "error",
+  "code": 404,
+  "message": "Medication not found",
+  "timestamp": "2025-12-17T10:30:00Z"
+}
+```
+
+### Conflict (409)
+```json
+{
+  "status": "error",
+  "code": 409,
+  "message": "A pharmacy with this email already exists",
+  "timestamp": "2025-12-17T10:30:00Z"
+}
+```
+
+### Server Error (500)
+```json
+{
+  "status": "error",
+  "code": 500,
+  "message": "An unexpected error occurred",
+  "timestamp": "2025-12-17T10:30:00Z"
+}
+```
+
+---
+
+## Tips for Testing
+
+1. **VS Code REST Client**: Install "REST Client" extension and use these snippets directly
+2. **Postman**: Import this file or manually create requests
+3. **cURL**: Convert to cURL using REST Client or Postman
+4. **Authorization**: Add JWT token to `Authorization: Bearer token` header

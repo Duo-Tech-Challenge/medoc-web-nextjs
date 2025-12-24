@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://medoc:medoc@db:5432/medoc
+      - JWT_SECRET=dev-secret-key-change-in-production
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=medoc
+      - POSTGRES_PASSWORD=medoc
+      - POSTGRES_DB=medoc
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U medoc"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

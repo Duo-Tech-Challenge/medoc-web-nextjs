@@ -6,6 +6,7 @@
 import { NextRequest } from 'next/server';
 import type { UserRole } from '@/types/common';
 import { ApiError, ErrorCode } from '@/types/api';
+import { extractTokenFromHeader, verifyToken } from '@/lib/jwt';
 
 export interface AuthContext {
   userId: string;
@@ -14,21 +15,27 @@ export interface AuthContext {
 }
 
 /**
- * À implémenter : vérifier le JWT token
+ * Vérifier le JWT token et retourner le contexte d'auth
  */
 export const verifyAuthToken = async (request: NextRequest): Promise<AuthContext | null> => {
   try {
     const authHeader = request.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
+    const token = extractTokenFromHeader(authHeader || undefined);
+
+    if (!token) {
       return null;
     }
 
-    // TODO: Vérifier et décoder le JWT token
-    // const token = authHeader.slice(7);
-    // const decoded = verifyJWT(token);
+    const payload = verifyToken(token);
+    if (!payload) {
+      return null;
+    }
 
-    // Pour maintenant, retourner null jusqu'à JWT setup
-    return null;
+    return {
+      userId: payload.userId,
+      email: payload.email,
+      role: payload.role,
+    };
   } catch {
     return null;
   }

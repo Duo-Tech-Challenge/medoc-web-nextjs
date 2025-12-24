@@ -1,7 +1,4 @@
-import Features from "@/components/Features";
-import Hero from "@/components/Hero";
-import Info from "@/components/Info";
-import Navbar from "@/components/Navbar";
+import { Features, Hero, Info, Navbar, SearchSection, StatsSection, CTASection, Footer } from "@/components/organisms";
 
 export default function Home() {
   return (
@@ -10,6 +7,10 @@ export default function Home() {
       <Hero />
       <Info />
       <Features />
+      <SearchSection />
+      <StatsSection />
+      <CTASection />
+      <Footer />
     </div>
   );
 }
